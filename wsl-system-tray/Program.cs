@@ -1,5 +1,7 @@
 using System.Diagnostics;
 using wsl_system_tray.SystemTray;
+using Microsoft.Extensions.Configuration;
+using System.Configuration;
 
 namespace wsl_system_tray
 {
@@ -8,14 +10,18 @@ namespace wsl_system_tray
         static NotifyIcon _notifyIcon = new NotifyIcon();
         static bool _visible = true;
         static Process _process = new Process();
+        static IConfiguration _config;
 
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
         [STAThread]
         static void Main()
         {
             ApplicationConfiguration.Initialize();
+
+            var builder = new ConfigurationBuilder();
+            builder.SetBasePath(Directory.GetCurrentDirectory())
+                   .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+            _config = builder.Build();
 
             StartSystemTray();
 
@@ -33,7 +39,7 @@ namespace wsl_system_tray
                 _visible = !_visible;
                 SystemTrayHelper.SetConsoleWindowVisibility(_visible);
             };
-            _notifyIcon.Icon = new Icon("Icon/app.ico");
+            _notifyIcon.Icon = new Icon(_config["icon"]!);
             _notifyIcon.Visible = true;
             _notifyIcon.Text = "Wsl";
 
@@ -52,7 +58,7 @@ namespace wsl_system_tray
             ProcessStartInfo startInfo = new()
             {
                 WindowStyle = ProcessWindowStyle.Hidden,
-                FileName = @"C:\Program Files\WindowsApps\MicrosoftCorporationII.WindowsSubsystemForLinux_2.1.5.0_x64__8wekyb3d8bbwe\wsl.exe"
+                FileName = _config["wslLocation"]!
             };
             _process.StartInfo = startInfo;
             _process.Start();

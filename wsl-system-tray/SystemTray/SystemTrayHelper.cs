@@ -23,7 +23,8 @@ namespace wsl_system_tray.SystemTray
         static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
         public static void SetConsoleWindowVisibility(bool visible)
         {
-            IntPtr hWnd = FindWindow(null, Console.Title);
+            string lpClassName = null;
+            IntPtr hWnd = FindWindow(lpClassName, Console.Title);
             if (hWnd != IntPtr.Zero)
             {
                 if (visible) ShowWindow(hWnd, 1); //1 = SW_SHOWNORMAL           
