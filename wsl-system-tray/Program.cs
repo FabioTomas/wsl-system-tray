@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using wsl_system_tray.SystemTray;
 using Microsoft.Extensions.Configuration;
-using System.Configuration;
 
 namespace wsl_system_tray
 {
